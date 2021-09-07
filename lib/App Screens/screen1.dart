@@ -56,7 +56,7 @@ class EventsState extends State<Events> {
           backgroundColor: Colors.purple,
           onPressed: () {
             debugPrint('Fab clicked');
-            navigateToDetail(db('', '', 2), 'Add Event');
+            navigateToDetail(db('', '', ''), 'Add Event');
           },
           tooltip: 'Add an event',
           child: Icon(Icons.add),
