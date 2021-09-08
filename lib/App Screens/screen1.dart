@@ -3,6 +3,8 @@ import 'package:to_do_app/App%20Screens/screen2.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:to_do_app/Database/db.dart';
+import 'package:to_do_app/Database/db.dart';
+
 import 'package:to_do_app/Utils/db_creation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,7 +19,8 @@ class EventsState extends State<Events> {
   int a = 0;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<db> noteList;
+  List<db> noteList = <db>[];
+
   int count = 0;
 
   int _selectedIndex = 0;
@@ -41,17 +44,16 @@ class EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
-    if (noteList == null) {
-      noteList = List<db>();
-      updateListView();
-    }
+    // if (noteList == null) {
+    //   noteList = List<db>();
+    //   updateListView();
+    // }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.purple,
           title: Text('To Do App'),
         ),
-        // body: screen2(),
-
+        body: todo(),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.purple,
           onPressed: () {
@@ -80,7 +82,7 @@ class EventsState extends State<Events> {
     TextStyle titleStyle = Theme.of(context).textTheme.subtitle1;
 
     return ListView.builder(
-        itemCount: a,
+        itemCount: noteList.length,
         itemBuilder: (BuildContext context, int position) {
           return Card(
             color: Colors.white,
@@ -91,10 +93,10 @@ class EventsState extends State<Events> {
                   color: Colors.blueAccent,
                 ),
                 title: Text(
-                  'abc',
+                  this.noteList[position].title,
                   style: titleStyle,
                 ),
-                subtitle: Text('def'),
+                subtitle: Text(this.noteList[position].description),
                 trailing: GestureDetector(
                   child: Icon(
                     Icons.delete,
@@ -136,16 +138,14 @@ class EventsState extends State<Events> {
     }
   }
 
-  void updateListView() {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    dbFuture.then((database) {
-      Future<List<db>> noteListFuture = databaseHelper.getNoteList();
-      noteListFuture.then((noteList) {
-        setState(() {
-          this.noteList = noteList;
-          this.count = noteList.length;
-        });
-      });
+  void updateListView() async {
+    final Database db = await databaseHelper.initializeDatabase();
+
+    noteList = await databaseHelper.getNoteList();
+
+    setState(() {
+      this.noteList = noteList;
+      this.count = noteList.length;
     });
   }
 }
